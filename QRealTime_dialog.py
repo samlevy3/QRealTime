@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 import os
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication,QVariant
+from .services.Service import Service
 from PyQt5 import QtGui, uic
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QWidget,QTableWidget,QTableWidgetItem
@@ -57,7 +57,7 @@ def getProxiesConf():
     if proxyEnabled == "true" and proxyType == 'HttpProxy': # test if there are proxy settings
         proxyDict = {
             "http"  : "http://%s:%s@%s:%s" % (proxyUser,proxyPassword,proxyHost,proxyPort),
-            "https" : "http://%s:%s@%s:%s" % (proxyUser,proxyPassword,proxyHost,proxyPort) 
+            "https" : "http://%s:%s@%s:%s" % (proxyUser,proxyPassword,proxyHost,proxyPort)
         }
         return proxyDict
     else:
@@ -113,11 +113,11 @@ class QRealTimeDialog(QtWidgets.QDialog, FORM_CLASS):
             serviceClass(container,caller)
             self.tabServices.setTabText(i, service)
             i=i+1
-    
+
     def getCurrentService(self):
         return self.tabServices.currentWidget().children()[0]
 
-class Aggregate (QTableWidget):
+class Aggregate (Service):
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
             We implement this ourselves since we do not inherit QObject.
@@ -130,35 +130,35 @@ class Aggregate (QTableWidget):
         return QCoreApplication.translate(self.__class__.__name__, message)
     tag='ODK Aggregate'
     def __init__(self,parent,caller):
-        super(Aggregate, self).__init__(parent)
-        self.parent = parent
-        self.iface=caller.iface
-        self.resize(QSize(310,260))
-        self.setParameters()
-        self.setColumnCount(2)
-        self.setColumnWidth(0, 152)
-        self.setColumnWidth(1, 152)
-        self.setRowCount(len(self.parameters)-1)
-        self.verticalHeader().hide()
-        self.horizontalHeader().hide()
+        super(Aggregate, self).__init__(parent, caller)
+        # self.parent = parent
+        # self.iface=caller.iface
+        # self.resize(QSize(310,260))
+        # self.setParameters()
+        # self.setColumnCount(2)
+        # self.setColumnWidth(0, 152)
+        # self.setColumnWidth(1, 152)
+        # self.setRowCount(len(self.parameters)-1)
+        # self.verticalHeader().hide()
+        # self.horizontalHeader().hide()
         self.tag='ODK Aggregate'
-        
-        S = QSettings()
-        for row,parameter in enumerate(self.parameters):
-            if row == 0:
-                self.service_id = parameter[1]
-                continue
-            row = row -1
-            pKey = QTableWidgetItem (parameter[0])
-            pKey.setFlags(pKey.flags() ^ Qt.ItemIsEditable)
-            pValue = QTableWidgetItem (parameter[1])
-            self.setItem(row,0,pKey)
-            valueFromSettings = S.value("QRealTime/%s/%s/" % (self.service_id,self.item(row,0).text()), defaultValue =  "undef")
-            if not valueFromSettings or valueFromSettings == "undef":
-                self.setItem(row,1,pValue)
-                S.setValue("QRealTime/%s/%s/" % (self.service_id,self.item(row,0).text()),parameter[1])
-            else:
-                self.setItem(row,1,QTableWidgetItem (valueFromSettings))
+
+        # S = QSettings()
+        # for row,parameter in enumerate(self.parameters):
+        #     if row == 0:
+        #         self.service_id = parameter[1]
+        #         continue
+        #     row = row -1
+        #     pKey = QTableWidgetItem (parameter[0])
+        #     pKey.setFlags(pKey.flags() ^ Qt.ItemIsEditable)
+        #     pValue = QTableWidgetItem (parameter[1])
+        #     self.setItem(row,0,pKey)
+        #     valueFromSettings = S.value("QRealTime/%s/%s/" % (self.service_id,self.item(row,0).text()), defaultValue =  "undef")
+        #     if not valueFromSettings or valueFromSettings == "undef":
+        #         self.setItem(row,1,pValue)
+        #         S.setValue("QRealTime/%s/%s/" % (self.service_id,self.item(row,0).text()),parameter[1])
+        #     else:
+        #         self.setItem(row,1,QTableWidgetItem (valueFromSettings))
     def setParameters(self):
         self.parameters =[
         ["id","Aggregate"],
@@ -170,32 +170,33 @@ class Aggregate (QTableWidget):
         ]
     def getServiceName(self):
         return self.service_id
-     
+
     def getAuth(self):
         auth = requests.auth.HTTPDigestAuth(self.getValue(self.tr('user')),self.getValue(self.tr('password')))
         return auth
 
-    def setup(self):
-        S = QSettings()
-        S.setValue("QRealTime/", self.parent.parent().currentIndex())
-        for row in range (0,self.rowCount()):
-            S.setValue("QRealTime/%s/%s/" % (self.service_id,self.item(row,0).text()),self.item(row,1).text())
-        
-    def getValue(self,key, newValue = None):
-        print("searching in setting parameter",key)
-        for row in range (0,self.rowCount()):
-            print(" parameter is",self.item(row,0).text())
-            if self.item(row,0).text() == key:
-                if newValue:
-                    self.item(row, 1).setText(str(newValue))
-                    print("setting new value",newValue)
-                    self.setup() #store to settings
-                value=self.item(row,1).text().strip()
-                if value:
-                    if key=='url':
-                        if not value.endswith('/'):
-                            value=value+'/'
-                    return value
+    # def setup(self):
+    #     S = QSettings()
+    #     S.setValue("QRealTime/", self.parent.parent().currentIndex())
+    #     for row in range (0,self.rowCount()):
+    #         S.setValue("QRealTime/%s/%s/" % (self.service_id,self.item(row,0).text()),self.item(row,1).text())
+
+    # def getValue(self,key, newValue = None):
+    #     print("searching in setting parameter",key)
+    #     for row in range (0,self.rowCount()):
+    #         print(" parameter is",self.item(row,0).text())
+    #         if self.item(row,0).text() == key:
+    #             if newValue:
+    #                 self.item(row, 1).setText(str(newValue))
+    #                 print("setting new value",newValue)
+    #                 self.setup() #store to settings
+    #             value=self.item(row,1).text().strip()
+    #             if value:
+    #                 if key=='url':
+    #                     if not value.endswith('/'):
+    #                         value=value+'/'
+    #                 return value
+
     def guessWKTGeomType(self,geom):
         if geom:
             coordinates = geom.split(';')
@@ -214,7 +215,7 @@ class Aggregate (QTableWidget):
             except:
                 pass
         if len(coordinates) == 1:
-            
+
             reprojectedPoint = self.transformToLayerSRS(QgsPoint(float(coordinatesList[0][1]),float(coordinatesList[0][0])))
             return "POINT(%s %s)" % (reprojectedPoint.x(), reprojectedPoint.y()) #geopoint
         else:
@@ -227,11 +228,11 @@ class Aggregate (QTableWidget):
             return "POLYGON((%s))" % coordinateString #geoshape #geotrace
         else:
             return "LINESTRING(%s)" % coordinateString
-     
+
 
 #    def getExportExtension(self):
 #        return 'xml'
-        
+
     def getFormList(self):
         method='GET'
         url=self.getValue('url')
@@ -296,7 +297,7 @@ class Aggregate (QTableWidget):
             if (fwidget=='Hidden'):
                 i+=1
                 continue
-                
+
             fieldDef = {}
             fieldDef['name'] = field.name()
             fieldDef['map'] = field.name()
@@ -321,7 +322,7 @@ class Aggregate (QTableWidget):
                 elif fieldDef['fieldWidget'] == 'Photo' or fieldDef['fieldWidget'] == 'ExternalResource' :
                     fieldDef['type']='image'
                     print('got an image type field')
-                
+
 #                fieldDef['choices'] = config
             else:
                 fieldDef['choices'] = {}
@@ -436,10 +437,10 @@ class Aggregate (QTableWidget):
                 self.updateLayer(self.layer,remoteTable,self.geoField)
                 print("lastID is",lastID)
                 self.getValue(self.tr("last Submission"),lastID)
-                self.iface.messageBar().pushSuccess(self.tag,self.tr("Data imported Successfully"))     
+                self.iface.messageBar().pushSuccess(self.tag,self.tr("Data imported Successfully"))
         else:
             self.iface.messageBar().pushCritical(self.tag,self.tr("Not able to collect data"))
-        
+
     def collectData(self,layer,xFormKey,doImportData=False,topElement='',version=None,geoField=''):
 #        if layer :
 #            print("layer is not present or not valid")
@@ -450,7 +451,7 @@ class Aggregate (QTableWidget):
             else:
                 print("Success",result[0])
                 print("task returned")
-        
+
         self.updateFields(layer)
         self.layer=layer
         self.turl=self.getValue('url')
@@ -471,12 +472,12 @@ class Aggregate (QTableWidget):
         #task1.waitForFinished()
         print("task status3 is  ",self.task1.status())
         #response, remoteTable = self.getTable(xFormKey,importData,topElement,version)
-        
-    
+
+
     def updateFields(self,layer,text='ODKUUID',q_type=QVariant.String,config={}):
         flag=True
         for field in layer.fields():
-            
+
             if field.name()[:10] == text[:10]:
                 flag=False
                 print("not writing fields")
@@ -507,7 +508,7 @@ class Aggregate (QTableWidget):
         type=layer.geometryType()
         geo=['POINT','LINE','POLYGON']
         layerGeo=geo[type]
-        
+
         uuidList = self.getUUIDList(self.processingLayer)
 
         newQgisFeatures = []
@@ -540,7 +541,7 @@ class Aggregate (QTableWidget):
                                 qgisFeature.setAttribute(QgisFieldsList.index(fieldName[:10]),fieldValue)
                             except:
                                 fieldError = fieldName
-                            
+
                     newQgisFeatures.append(qgisFeature)
             except Exception as e:
                     print('unable to create',e)
@@ -550,7 +551,7 @@ class Aggregate (QTableWidget):
         except:
             self.iface.messageBar().pushCritical(self.tag,"Stop layer editing and import again")
         self.processingLayer = None
-        
+
     def getUUIDList(self,lyr):
         uuidList = []
         uuidFieldName=None
@@ -564,7 +565,7 @@ class Aggregate (QTableWidget):
                 uuidList.append(qgisFeature[uuidFieldName])
         print (uuidList)
         return uuidList
-            
+
     def transformToLayerSRS(self, pPoint):
         # transformation from the current SRS to WGS84
         crsDest = self.processingLayer.crs () # get layer crs
@@ -697,7 +698,7 @@ class Kobo (Aggregate):
             return response
         if xForm_id in formList:
             form=xForm_id
-            xForm_id=formList[xForm_id]        
+            xForm_id=formList[xForm_id]
         message =''
         if form:
             message= 'Form Updated'
@@ -751,7 +752,7 @@ class Kobo (Aggregate):
         try:
             response= requests.get(url,proxies=getProxiesConf(),auth=(user,password),params=para)
             forms= response.json()
-            for form in forms['results']:        
+            for form in forms['results']:
                 if form['asset_type']=='survey' and form['deployment__active']==True:
                     keyDict[form['name']]=form['uid']
 #            print('keyDict is',keyDict)
@@ -932,7 +933,7 @@ class Kobo (Aggregate):
             if (fwidget=='Hidden'):
                 i+=1
                 continue
-                
+
             fieldDef = {}
             fieldDef["name"]=field.name()
             fieldDef["label"] = field.alias() or field.name()
@@ -960,7 +961,7 @@ class Kobo (Aggregate):
                 elif fieldDef["fieldWidget"] == 'Photo' or fieldDef["fieldWidget"] == 'ExternalResource' :
                     fieldDef["type"]="image"
                     print('got an image type field')
-                
+
 #                fieldDef['choices'] = config
 #            else:
 #                fieldDef['choices'] = {}
@@ -979,10 +980,10 @@ class Central (Kobo):
         self.usertoken = ""
         # corresponding id for entered project name
         self.project_id = 0
-        # name of selected form 
+        # name of selected form
         self.form_name = ""
         self.tag = "ODK Central"
-        
+
     def setParameters(self):
         self.parameters =[
         ["id","Central"],
@@ -993,7 +994,7 @@ class Central (Kobo):
         [self.tr('sync time'),''],
         [self.tr('project name'),'']
         ]
-        
+
     def getFormList(self):
         """Retrieves list of all forms using user entered credentials
 
@@ -1002,7 +1003,7 @@ class Central (Kobo):
         forms - dictionary
             contains all forms in user's account
         x - HTTP response
-            authentication response 
+            authentication response
         """
 
         user=self.getValue(self.tr("user"))
@@ -1034,8 +1035,8 @@ class Central (Kobo):
 
     def importData(self,layer,selectedForm,doImportData=True):
         """Imports user selected form from server """
-        
-        #from central 
+
+        #from central
         user=self.getValue(self.tr("user"))
         project_id = Central.project_id
         password=self.getValue(self.tr("password"))
@@ -1066,7 +1067,7 @@ class Central (Kobo):
             self.iface.messageBar().pushWarning(self.tag,self.tr("not able to connect to server"))
 
 
-    def flattenValues(self, nestedDict): 
+    def flattenValues(self, nestedDict):
         """Reformats a nested dictionary into a flattened dictionary
 
         If the argument parent_key and sep aren't passed in, the default underscore is used
@@ -1173,7 +1174,7 @@ class Central (Kobo):
             if (fwidget=='Hidden'):
                 i+=1
                 continue
-                
+
             fieldDef = {}
             fieldDef['name'] = field.name()
             fieldDef['map'] = field.name()
@@ -1198,7 +1199,7 @@ class Central (Kobo):
                 elif fieldDef['fieldWidget'] == 'Photo' or fieldDef['fieldWidget'] == 'ExternalResource' :
                     fieldDef['type']='image'
                     print('got an image type field')
-                
+
 #                fieldDef['choices'] = config
             else:
                 fieldDef['choices'] = {}
@@ -1262,11 +1263,11 @@ class Central (Kobo):
                 coordinates[0] = latitude
                 for val in formattedData[storedGeoField]:
                     stringversion+= str(val) + ' '
-            else: 
+            else:
                 count = 1
                 for each_coor in coordinates:
                     temp = ""
-                    #converting current (longitude, latitude) coordinate to (latitude, longitude) for accurate graphing 
+                    #converting current (longitude, latitude) coordinate to (latitude, longitude) for accurate graphing
                     latitude = each_coor[1]
                     each_coor[1] = each_coor[0]
                     each_coor[0] = latitude
@@ -1285,7 +1286,7 @@ class Central (Kobo):
                 for attachment in attachmentsResponse.json():
                     binar_url= url_data1 +"/"+str(attachment['name'])
             #subTime_datetime=datetime.datetime.strptime(subTime,'%Y-%m-%dT%H:%M:%S')
-            #subTimeList.append(subTime_datetime) 
+            #subTimeList.append(subTime_datetime)
             for key in list(formattedData):
                 print(key)
                 if key == self.geoField:
