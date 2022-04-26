@@ -40,56 +40,56 @@ from pyxform.builder import create_survey_element_from_dict
 debug=True
 tag="QRealTime"
 def print(text,opt=None):
-    """ to redirect print to MessageLog"""
+    """ to redirect self.print to MessageLog"""
     if debug:
         QgsMessageLog.logMessage(str(text)+str(opt),tag=tag,level=Qgis.Info)
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'QRealTime_dialog_services.ui'))
 
-def getProxiesConf():
-    s = QSettings() #getting proxy from qgis options settings
-    proxyEnabled = s.value("proxy/proxyEnabled", "")
-    proxyType = s.value("proxy/proxyType", "" )
-    proxyHost = s.value("proxy/proxyHost", "" )
-    proxyPort = s.value("proxy/proxyPort", "" )
-    proxyUser = s.value("proxy/proxyUser", "" )
-    proxyPassword = s.value("proxy/proxyPassword", "" )
-    if proxyEnabled == "true" and proxyType == 'HttpProxy': # test if there are proxy settings
-        proxyDict = {
-            "http"  : "http://%s:%s@%s:%s" % (proxyUser,proxyPassword,proxyHost,proxyPort),
-            "https" : "http://%s:%s@%s:%s" % (proxyUser,proxyPassword,proxyHost,proxyPort)
-        }
-        return proxyDict
-    else:
-        return None
-def qtype(odktype):
-    if odktype == 'binary':
-        return QVariant.String,{'DocumentViewer': 2, 'DocumentViewerHeight': 0, 'DocumentViewerWidth': 0, 'FileWidget': True, 'FileWidgetButton': True, 'FileWidgetFilter': '', 'PropertyCollection': {'name': None, 'properties': {}, 'type': 'collection'}, 'RelativeStorage': 0, 'StorageMode': 0}
-    elif odktype=='string':
-        return QVariant.String,{}
-    elif odktype[:3] == 'sel' :
-        return QVariant.String,{}
-    elif odktype[:3] == 'int':
-        return QVariant.Int, {}
-    elif odktype[:3]=='dat':
-        return QVariant.Date, {}
-    elif odktype[:3]=='ima':
-        return QVariant.String,{'DocumentViewer': 2, 'DocumentViewerHeight': 0, 'DocumentViewerWidth': 0, 'FileWidget': True, 'FileWidgetButton': True, 'FileWidgetFilter': '', 'PropertyCollection': {'name': None, 'properties': {}, 'type': 'collection'}, 'RelativeStorage': 0, 'StorageMode': 0}
-    elif odktype == 'Hidden':
-        return 'Hidden'
-    else:
-        return (QVariant.String),{}
-def QVariantToODKtype(q_type):
-        if  q_type == QVariant.String:
-            return 'text'
-        elif q_type == QVariant.Date:
-            return 'datetime'
-        elif q_type in [2,3,4,32,33,35,36]:
-            return 'integer'
-        elif q_type in [6,38]:
-            return 'decimal'
-        else:
-            return 'text'
+# def getProxiesConf():
+#     s = QSettings() #getting proxy from qgis options settings
+#     proxyEnabled = s.value("proxy/proxyEnabled", "")
+#     proxyType = s.value("proxy/proxyType", "" )
+#     proxyHost = s.value("proxy/proxyHost", "" )
+#     proxyPort = s.value("proxy/proxyPort", "" )
+#     proxyUser = s.value("proxy/proxyUser", "" )
+#     proxyPassword = s.value("proxy/proxyPassword", "" )
+#     if proxyEnabled == "true" and proxyType == 'HttpProxy': # test if there are proxy settings
+#         proxyDict = {
+#             "http"  : "http://%s:%s@%s:%s" % (proxyUser,proxyPassword,proxyHost,proxyPort),
+#             "https" : "http://%s:%s@%s:%s" % (proxyUser,proxyPassword,proxyHost,proxyPort)
+#         }
+#         return proxyDict
+#     else:
+#         return None
+# def qtype(odktype):
+#     if odktype == 'binary':
+#         return QVariant.String,{'DocumentViewer': 2, 'DocumentViewerHeight': 0, 'DocumentViewerWidth': 0, 'FileWidget': True, 'FileWidgetButton': True, 'FileWidgetFilter': '', 'PropertyCollection': {'name': None, 'properties': {}, 'type': 'collection'}, 'RelativeStorage': 0, 'StorageMode': 0}
+#     elif odktype=='string':
+#         return QVariant.String,{}
+#     elif odktype[:3] == 'sel' :
+#         return QVariant.String,{}
+#     elif odktype[:3] == 'int':
+#         return QVariant.Int, {}
+#     elif odktype[:3]=='dat':
+#         return QVariant.Date, {}
+#     elif odktype[:3]=='ima':
+#         return QVariant.String,{'DocumentViewer': 2, 'DocumentViewerHeight': 0, 'DocumentViewerWidth': 0, 'FileWidget': True, 'FileWidgetButton': True, 'FileWidgetFilter': '', 'PropertyCollection': {'name': None, 'properties': {}, 'type': 'collection'}, 'RelativeStorage': 0, 'StorageMode': 0}
+#     elif odktype == 'Hidden':
+#         return 'Hidden'
+#     else:
+#         return (QVariant.String),{}
+# def QVariantToODKtype(q_type):
+#         if  q_type == QVariant.String:
+#             return 'text'
+#         elif q_type == QVariant.Date:
+#             return 'datetime'
+#         elif q_type in [2,3,4,32,33,35,36]:
+#             return 'integer'
+#         elif q_type in [6,38]:
+#             return 'decimal'
+#         else:
+#             return 'text'
 class QRealTimeDialog(QtWidgets.QDialog, FORM_CLASS):
     services = ['Aggregate','Kobo', 'Central']
     def __init__(self, caller,parent=None):
@@ -118,16 +118,16 @@ class QRealTimeDialog(QtWidgets.QDialog, FORM_CLASS):
         return self.tabServices.currentWidget().children()[0]
 
 class Aggregate (Service):
-    def tr(self, message):
-        """Get the translation for a string using Qt translation API.
-            We implement this ourselves since we do not inherit QObject.
-            :param message: String for translation.
-            :type message: str, QString
-            :returns: Translated version of message.
-            :rtype: QString
-        """
-        # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
-        return QCoreApplication.translate(self.__class__.__name__, message)
+    # def tr(self, message):
+    #     """Get the translation for a string using Qt translation API.
+    #         We implement this ourselves since we do not inherit QObject.
+    #         :param message: String for translation.
+    #         :type message: str, QString
+    #         :returns: Translated version of message.
+    #         :rtype: QString
+    #     """
+    #     # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
+    #     return QCoreApplication.translate(self.__class__.__name__, message)
     tag='ODK Aggregate'
     def __init__(self,parent,caller):
         super(Aggregate, self).__init__(parent, caller)
@@ -168,8 +168,8 @@ class Aggregate (Service):
         [self.tr("last Submission"),''],
         [self.tr('sync time'),3600]
         ]
-    def getServiceName(self):
-        return self.service_id
+    # def getServiceName(self):
+    #     return self.service_id
 
     def getAuth(self):
         auth = requests.auth.HTTPDigestAuth(self.getValue(self.tr('user')),self.getValue(self.tr('password')))
@@ -182,13 +182,13 @@ class Aggregate (Service):
     #         S.setValue("QRealTime/%s/%s/" % (self.service_id,self.item(row,0).text()),self.item(row,1).text())
 
     # def getValue(self,key, newValue = None):
-    #     print("searching in setting parameter",key)
+    #     self.print("searching in setting parameter",key)
     #     for row in range (0,self.rowCount()):
-    #         print(" parameter is",self.item(row,0).text())
+    #         self.print(" parameter is",self.item(row,0).text())
     #         if self.item(row,0).text() == key:
     #             if newValue:
     #                 self.item(row, 1).setText(str(newValue))
-    #                 print("setting new value",newValue)
+    #                 self.print("setting new value",newValue)
     #                 self.setup() #store to settings
     #             value=self.item(row,1).text().strip()
     #             if value:
@@ -197,37 +197,37 @@ class Aggregate (Service):
     #                         value=value+'/'
     #                 return value
 
-    def guessWKTGeomType(self,geom):
-        if geom:
-            coordinates = geom.split(';')
-        else:
-            return 'error'
-#        print ('coordinates are '+ coordinates)
-        firstCoordinate = coordinates[0].strip().split(" ")
-        if len(firstCoordinate) < 2:
-            return "invalid", None
-        coordinatesList = []
-        for coordinate in coordinates:
-            decodeCoord = coordinate.strip().split(" ")
-#            print 'decordedCoord is'+ decodeCoord
-            try:
-                coordinatesList.append([decodeCoord[0],decodeCoord[1]])
-            except:
-                pass
-        if len(coordinates) == 1:
+#     def guessWKTGeomType(self,geom):
+#         if geom:
+#             coordinates = geom.split(';')
+#         else:
+#             return 'error'
+# #        self.print ('coordinates are '+ coordinates)
+#         firstCoordinate = coordinates[0].strip().split(" ")
+#         if len(firstCoordinate) < 2:
+#             return "invalid", None
+#         coordinatesList = []
+#         for coordinate in coordinates:
+#             decodeCoord = coordinate.strip().split(" ")
+# #            self.print 'decordedCoord is'+ decodeCoord
+#             try:
+#                 coordinatesList.append([decodeCoord[0],decodeCoord[1]])
+#             except:
+#                 pass
+#         if len(coordinates) == 1:
 
-            reprojectedPoint = self.transformToLayerSRS(QgsPoint(float(coordinatesList[0][1]),float(coordinatesList[0][0])))
-            return "POINT(%s %s)" % (reprojectedPoint.x(), reprojectedPoint.y()) #geopoint
-        else:
-            coordinateString = ""
-            for coordinate in coordinatesList:
-                reprojectedPoint = self.transformToLayerSRS(QgsPoint(float(coordinate[1]), float(coordinate[0])))
-                coordinateString += "%s %s," % (reprojectedPoint.x(), reprojectedPoint.y())
-            coordinateString = coordinateString[:-1]
-        if  coordinatesList[0][0] == coordinatesList[-1][0] and coordinatesList[0][1] == coordinatesList[-1][1]:
-            return "POLYGON((%s))" % coordinateString #geoshape #geotrace
-        else:
-            return "LINESTRING(%s)" % coordinateString
+#             reprojectedPoint = self.transformToLayerSRS(QgsPoint(float(coordinatesList[0][1]),float(coordinatesList[0][0])))
+#             return "POINT(%s %s)" % (reprojectedPoint.x(), reprojectedPoint.y()) #geopoint
+#         else:
+#             coordinateString = ""
+#             for coordinate in coordinatesList:
+#                 reprojectedPoint = self.transformToLayerSRS(QgsPoint(float(coordinate[1]), float(coordinate[0])))
+#                 coordinateString += "%s %s," % (reprojectedPoint.x(), reprojectedPoint.y())
+#             coordinateString = coordinateString[:-1]
+#         if  coordinatesList[0][0] == coordinatesList[-1][0] and coordinatesList[0][1] == coordinatesList[-1][1]:
+#             return "POLYGON((%s))" % coordinateString #geoshape #geotrace
+#         else:
+#             return "LINESTRING(%s)" % coordinateString
 
 
 #    def getExportExtension(self):
@@ -242,7 +242,7 @@ class Aggregate (Service):
             self.iface.messageBar().pushWarning(self.tag,self.tr("Enter url in settings"))
             return None,None
         try:
-            response= requests.request(method,furl,proxies=getProxiesConf(),auth=self.getAuth(),verify=False)
+            response= requests.request(method,furl,proxies=self.getProxiesConf(),auth=self.getAuth(),verify=False)
         except:
             self.iface.messageBar().pushWarning(self.tag,self.tr("Not able to connect to server"))
             return None,None
@@ -263,7 +263,7 @@ class Aggregate (Service):
             self.iface.messageBar().pushWarning(self.tag,self.tr("Enter url in settings"))
             return
         try:
-            response= requests.request('GET',furl,proxies=getProxiesConf(),auth=self.getAuth(),verify=False)
+            response= requests.request('GET',furl,proxies=self.getProxiesConf(),auth=self.getAuth(),verify=False)
         except:
             self.iface.messageBar().pushWarning(self.tag,self.tr("Not able to connect to server"))
             return
@@ -272,7 +272,7 @@ class Aggregate (Service):
             #     importForm.write(response.content)
             self.formKey,self.topElement,self.version,self.geoField = self.updateLayerXML(layer,response.content)
             layer.setName(self.formKey)
-            print("calling collect data")
+            self.print("calling collect data")
             self.collectData(layer,self.formKey,importData,self.topElement,self.version,self.geoField)
         else:
             self.iface.messageBar().pushWarning(self.tag,self.tr("Not able to collect data from server"))
@@ -303,11 +303,11 @@ class Aggregate (Service):
             fieldDef['map'] = field.name()
             fieldDef['label'] = field.alias() or field.name()
             fieldDef['hint'] = ''
-            fieldDef['type'] = QVariantToODKtype(field.type())
+            fieldDef['type'] = self.QVariantToODKtype(field.type())
             fieldDef['bind'] = {}
 #            fieldDef['fieldWidget'] = currentFormConfig.widgetType(i)
             fieldDef['fieldWidget']=widget.type()
-            print('getFieldModel',fieldDef['fieldWidget'])
+            self.print('getFieldModel',fieldDef['fieldWidget'])
             if fieldDef['fieldWidget'] in ('ValueMap','CheckBox','Photo','ExternalResource'):
                 if fieldDef['fieldWidget'] == 'ValueMap':
                     fieldDef['type']='select one'
@@ -316,12 +316,12 @@ class Aggregate (Service):
                     for value in valueMap:
                         for k,v in value.items():
                                 config[v]=k
-                    print('configuration is ',config)
+                    self.print('configuration is ',config)
                     choicesList=[{'name':name,'label':label} for name,label in config.items()]
                     fieldDef["choices"] = choicesList
                 elif fieldDef['fieldWidget'] == 'Photo' or fieldDef['fieldWidget'] == 'ExternalResource' :
                     fieldDef['type']='image'
-                    print('got an image type field')
+                    self.print('got an image type field')
 
 #                fieldDef['choices'] = config
             else:
@@ -345,29 +345,29 @@ class Aggregate (Service):
             version=instance[0].attrib['version']
         except:
             version='null'
-        print('key captured'+ key)
-        print (root[0][1].findall(ns+'bind'))
+        self.print('key captured'+ key)
+        self.print (root[0][1].findall(ns+'bind'))
         for bind in root[0][1].findall(ns+'bind'):
             attrib=bind.attrib
-            print (attrib)
+            self.print (attrib)
             fieldName= attrib['nodeset'].split('/')[-1]
             try:
                 fieldType=attrib['type']
             except:
                 continue
-            #print('attrib type is',attrib['type'])
-            qgstype,config = qtype(attrib['type'])
-            #print ('first attribute'+ fieldName)
+            #self.print('attrib type is',attrib['type'])
+            qgstype,config = self.qtype(attrib['type'])
+            #self.print ('first attribute'+ fieldName)
             inputs=root[1].findall('.//*[@ref]')
             if fieldType[:3]!='geo':
-                print('creating new field:'+ fieldName)
+                self.print('creating new field:'+ fieldName)
                 isHidden= True
                 for input in inputs:
                     if fieldName == input.attrib['ref'].split('/')[-1]:
                         isHidden= False
                         break
                 if isHidden:
-                    #print('Reached Hidden')
+                    #self.print('Reached Hidden')
                     config['type']='Hidden'
                 self.updateFields(layer,fieldName,qgstype,config)
             else:
@@ -377,7 +377,7 @@ class Aggregate (Service):
         self.updateFields(layer)
         version= str(datetime.date.today())
         fieldDict= self.getFieldsModel(layer)
-        print ('fieldDict',fieldDict)
+        self.print ('fieldDict',fieldDict)
         surveyDict= {"name":layer.name(),"title":layer.name(),'VERSION':version,"instance_name": 'uuid()',"submission_url": '',
         "default_language":'default','id_string':layer.name(),'type':'survey','children':fieldDict }
         survey=create_survey_element_from_dict(surveyDict)
@@ -386,7 +386,7 @@ class Aggregate (Service):
             os.chdir(os.path.expanduser('~'))
             self.sendForm(layer.name(),xml)
         except Exception as e:
-            print("error in creating xform xml",e)
+            self.print("error in creating xform xml",e)
             self.iface.messageBar().pushCritical(self.tag,self.tr("Survey form can't be created, check layer name"))
     def sendForm(self,xForm_id,xml):
 #        step1 - verify if form exists:
@@ -411,7 +411,7 @@ class Aggregate (Service):
             xForm.write(xml)
         file = open('xForm.xml','r')
         files = {'form_def_file':file}
-        response = requests.request(method, url,files = files, proxies = getProxiesConf(),auth=self.getAuth(),verify=False )
+        response = requests.request(method, url,files = files, proxies = self.getProxiesConf(),auth=self.getAuth(),verify=False )
         if response.status_code== 201:
             self.iface.messageBar().pushSuccess(self.tag,
                                                 self.tr('Layer is online('+message+'), Collect data from App'))
@@ -421,165 +421,164 @@ class Aggregate (Service):
             self.iface.messageBar().pushCritical(self.tag,self.tr("Form is not sent"))
         file.close()
         return response
-    def test(self,task,a,b):
-        print(a,b)
-        return [a,b]
-    def comp(self,exception,result):
-        if exception:
-            print("exception in task execution")
-        response=result['response']
-        remoteTable=result['table']
-        lastID=result['lastID']
-        if response.status_code == 200:
-            print ('after task finished before update layer')
-            if remoteTable:
-                print ('task has returned some data')
-                self.updateLayer(self.layer,remoteTable,self.geoField)
-                print("lastID is",lastID)
-                self.getValue(self.tr("last Submission"),lastID)
-                self.iface.messageBar().pushSuccess(self.tag,self.tr("Data imported Successfully"))
-        else:
-            self.iface.messageBar().pushCritical(self.tag,self.tr("Not able to collect data"))
+    # def test(self,task,a,b):
+    #     self.print(a,b)
+    #     return [a,b]
+    # def comp(self,exception,result):
+    #     if exception:
+    #         self.print("exception in task execution")
+    #     response=result['response']
+    #     remoteTable=result['table']
+    #     lastID=result['lastID']
+    #     if response.status_code == 200:
+    #         self.print ('after task finished before update layer')
+    #         if remoteTable:
+    #             self.print ('task has returned some data')
+    #             self.updateLayer(self.layer,remoteTable,self.geoField)
+    #             self.print("lastID is",lastID)
+    #             self.getValue(self.tr("last Submission"),lastID)
+    #             self.iface.messageBar().pushSuccess(self.tag,self.tr("Data imported Successfully"))
+    #     else:
+    #         self.iface.messageBar().pushCritical(self.tag,self.tr("Not able to collect data"))
 
-    def collectData(self,layer,xFormKey,doImportData=False,topElement='',version=None,geoField=''):
-#        if layer :
-#            print("layer is not present or not valid")
-#            return
-        def testc(exception,result):
-            if exception:
-                print("task raised exception")
-            else:
-                print("Success",result[0])
-                print("task returned")
+#     def collectData(self,layer,xFormKey,doImportData=False,topElement='',version=None,geoField=''):
+# #        if layer :
+# #            self.print("layer is not present or not valid")
+# #            return
+#         def testc(exception,result):
+#             if exception:
+#                 self.print("task raised exception")
+#             else:
+#                 self.print("Success",result[0])
+#                 self.print("task returned")
 
-        self.updateFields(layer)
-        self.layer=layer
-        self.turl=self.getValue('url')
-        self.auth=self.getAuth()
-        self.lastID=self.getValue('last Submission')
-        self.proxyConfig= getProxiesConf()
-        self.xFormKey=xFormKey
-        self.isImportData=doImportData
-        self.topElement=topElement
-        self.version=version
-        print("task is being created")
-        self.task1 = QgsTask.fromFunction('downloading data',self.getTable, on_finished=self.comp)
-        print("task is created")
-        print("task status1 is  ",self.task1.status())
-        QgsApplication.taskManager().addTask(self.task1)
-        print("task added to taskmanager")
-        print("task status2 is  ",self.task1.status())
-        #task1.waitForFinished()
-        print("task status3 is  ",self.task1.status())
-        #response, remoteTable = self.getTable(xFormKey,importData,topElement,version)
+#         self.updateFields(layer)
+#         self.layer=layer
+#         self.turl=self.getValue('url')
+#         self.lastID=self.getValue('last Submission')
+#         self.proxyConfig= self.getProxiesConf()
+#         self.xFormKey=xFormKey
+#         self.isImportData=doImportData
+#         self.topElement=topElement
+#         self.version=version
+#         self.print("task is being created")
+#         self.task1 = QgsTask.fromFunction('downloading data',self.getTable, on_finished=self.comp)
+#         self.print("task is created")
+#         self.print("task status1 is  ",self.task1.status())
+#         QgsApplication.taskManager().addTask(self.task1)
+#         self.print("task added to taskmanager")
+#         self.print("task status2 is  ",self.task1.status())
+#         #task1.waitForFinished()
+#         self.print("task status3 is  ",self.task1.status())
+#         #response, remoteTable = self.getTable(xFormKey,importData,topElement,version)
 
 
-    def updateFields(self,layer,text='ODKUUID',q_type=QVariant.String,config={}):
-        flag=True
-        for field in layer.fields():
+    # def updateFields(self,layer,text='ODKUUID',q_type=QVariant.String,config={}):
+    #     flag=True
+    #     for field in layer.fields():
 
-            if field.name()[:10] == text[:10]:
-                flag=False
-                print("not writing fields")
-        if flag:
-            uuidField = QgsField(text, q_type)
-            if q_type == QVariant.String:
-                uuidField.setLength(300)
-            layer.dataProvider().addAttributes([uuidField])
-            layer.updateFields()
-        fId= layer.dataProvider().fieldNameIndex(text)
-        try:
-            if config['type']== 'Hidden':
-                print('setting hidden widget')
-                layer.setEditorWidgetSetup( fId, QgsEditorWidgetSetup( "Hidden" ,config ) )
-                return
-        except Exception as e:
-            print(e)
-        if config=={}:
-            return
-        print('now setting exernal resource widgt')
-        layer.setEditorWidgetSetup( fId, QgsEditorWidgetSetup( "ExternalResource" ,config ) )
-    def updateLayer(self,layer,dataDict,geoField=''):
-        #print "UPDATING N.",len(dataDict),'FEATURES'
-        self.processingLayer = layer
-        QgisFieldsList = [field.name() for field in layer.fields()]
-        #layer.beginEditCommand("ODK syncronize")
-#        layer.startEditing()
-        type=layer.geometryType()
-        geo=['POINT','LINE','POLYGON']
-        layerGeo=geo[type]
+    #         if field.name()[:10] == text[:10]:
+    #             flag=False
+    #             self.print("not writing fields")
+    #     if flag:
+    #         uuidField = QgsField(text, q_type)
+    #         if q_type == QVariant.String:
+    #             uuidField.setLength(300)
+    #         layer.dataProvider().addAttributes([uuidField])
+    #         layer.updateFields()
+    #     fId= layer.dataProvider().fieldNameIndex(text)
+    #     try:
+    #         if config['type']== 'Hidden':
+    #             self.print('setting hidden widget')
+    #             layer.setEditorWidgetSetup( fId, QgsEditorWidgetSetup( "Hidden" ,config ) )
+    #             return
+    #     except Exception as e:
+    #         self.print(e)
+    #     if config=={}:
+    #         return
+    #     self.print('now setting exernal resource widgt')
+    #     layer.setEditorWidgetSetup( fId, QgsEditorWidgetSetup( "ExternalResource" ,config ) )
+#     def updateLayer(self,layer,dataDict,geoField=''):
+#         #self.print "UPDATING N.",len(dataDict),'FEATURES'
+#         self.processingLayer = layer
+#         QgisFieldsList = [field.name() for field in layer.fields()]
+#         #layer.beginEditCommand("ODK syncronize")
+# #        layer.startEditing()
+#         type=layer.geometryType()
+#         geo=['POINT','LINE','POLYGON']
+#         layerGeo=geo[type]
 
-        uuidList = self.getUUIDList(self.processingLayer)
+#         uuidList = self.getUUIDList(self.processingLayer)
 
-        newQgisFeatures = []
-        fieldError = None
-        print('geofield is',geoField)
-        for odkFeature in dataDict:
-            #print(odkFeature)
-            id=None
-            try:
-                id= odkFeature['ODKUUID']
-                print('odk id is',id)
-            except:
-                print('error in reading ODKUUID')
-            try:
-                if not id in uuidList:
-                    qgisFeature = QgsFeature()
-                    print("odkFeature",odkFeature)
-                    wktGeom = self.guessWKTGeomType(odkFeature[geoField])
-                    print (wktGeom)
-                    if wktGeom[:3] != layerGeo[:3]:
-                        print(wktGeom,'is not matching'+layerGeo)
-                        continue
-                    qgisGeom = QgsGeometry.fromWkt(wktGeom)
-                    print('geom is',qgisGeom)
-                    qgisFeature.setGeometry(qgisGeom)
-                    qgisFeature.initAttributes(len(QgisFieldsList))
-                    for fieldName, fieldValue in odkFeature.items():
-                        if fieldName != geoField:
-                            try:
-                                qgisFeature.setAttribute(QgisFieldsList.index(fieldName[:10]),fieldValue)
-                            except:
-                                fieldError = fieldName
+#         newQgisFeatures = []
+#         fieldError = None
+#         self.print('geofield is',geoField)
+#         for odkFeature in dataDict:
+#             #self.print(odkFeature)
+#             id=None
+#             try:
+#                 id= odkFeature['ODKUUID']
+#                 self.print('odk id is',id)
+#             except:
+#                 self.print('error in reading ODKUUID')
+#             try:
+#                 if not id in uuidList:
+#                     qgisFeature = QgsFeature()
+#                     self.print("odkFeature",odkFeature)
+#                     wktGeom = self.guessWKTGeomType(odkFeature[geoField])
+#                     self.print (wktGeom)
+#                     if wktGeom[:3] != layerGeo[:3]:
+#                         self.print(wktGeom,'is not matching'+layerGeo)
+#                         continue
+#                     qgisGeom = QgsGeometry.fromWkt(wktGeom)
+#                     self.print('geom is',qgisGeom)
+#                     qgisFeature.setGeometry(qgisGeom)
+#                     qgisFeature.initAttributes(len(QgisFieldsList))
+#                     for fieldName, fieldValue in odkFeature.items():
+#                         if fieldName != geoField:
+#                             try:
+#                                 qgisFeature.setAttribute(QgisFieldsList.index(fieldName[:10]),fieldValue)
+#                             except:
+#                                 fieldError = fieldName
 
-                    newQgisFeatures.append(qgisFeature)
-            except Exception as e:
-                    print('unable to create',e)
-        try:
-            with edit(layer):
-                layer.addFeatures(newQgisFeatures)
-        except:
-            self.iface.messageBar().pushCritical(self.tag,"Stop layer editing and import again")
-        self.processingLayer = None
+#                     newQgisFeatures.append(qgisFeature)
+#             except Exception as e:
+#                     self.print('unable to create',e)
+#         try:
+#             with edit(layer):
+#                 layer.addFeatures(newQgisFeatures)
+#         except:
+#             self.iface.messageBar().pushCritical(self.tag,"Stop layer editing and import again")
+#         self.processingLayer = None
 
-    def getUUIDList(self,lyr):
-        uuidList = []
-        uuidFieldName=None
-        QgisFieldsList = [field.name() for field in lyr.fields()]
-        for field in QgisFieldsList:
-            if 'UUID' in field:
-                uuidFieldName =field
-        if uuidFieldName:
-            print(uuidFieldName)
-            for qgisFeature in lyr.getFeatures():
-                uuidList.append(qgisFeature[uuidFieldName])
-        print (uuidList)
-        return uuidList
+    # def getUUIDList(self,lyr):
+    #     uuidList = []
+    #     uuidFieldName=None
+    #     QgisFieldsList = [field.name() for field in lyr.fields()]
+    #     for field in QgisFieldsList:
+    #         if 'UUID' in field:
+    #             uuidFieldName =field
+    #     if uuidFieldName:
+    #         self.print(uuidFieldName)
+    #         for qgisFeature in lyr.getFeatures():
+    #             uuidList.append(qgisFeature[uuidFieldName])
+    #     self.print (uuidList)
+    #     return uuidList
 
-    def transformToLayerSRS(self, pPoint):
-        # transformation from the current SRS to WGS84
-        crsDest = self.processingLayer.crs () # get layer crs
-        crsSrc = QgsCoordinateReferenceSystem("EPSG:4326")  # WGS 84
-        xform = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
-        try:
-            return QgsPoint(xform.transform(pPoint))
-        except :
-            return QgsPoint(xform.transform(QgsPointXY(pPoint)))
+    # def transformToLayerSRS(self, pPoint):
+    #     # transformation from the current SRS to WGS84
+    #     crsDest = self.processingLayer.crs () # get layer crs
+    #     crsSrc = QgsCoordinateReferenceSystem("EPSG:4326")  # WGS 84
+    #     xform = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
+    #     try:
+    #         return QgsPoint(xform.transform(pPoint))
+    #     except :
+    #         return QgsPoint(xform.transform(QgsPointXY(pPoint)))
 
 
     def getTable(self,task):
         #turl=self.getValue('url')
-        print("calling getTable in ODK Aggregate")
+        self.print("calling getTable in ODK Aggregate")
         table=[]
         if self.turl:
             url=self.turl+'/view/submissionList?formId='+self.xFormKey
@@ -592,7 +591,7 @@ class Aggregate (Service):
         if not self.isImportData:
             lastID=self.lastID
         try:
-            response = requests.request(method,url,proxies=self.proxyConfig,auth=self.auth,verify=False)
+            response = requests.request(method,url,proxies=self.proxyConfig,auth=self.getAuth(),verify=False)
         except:
             #self.iface.messageBar().pushCritical(self.tag,self.tr("Not able to connect to server"))
             return {'response':response, 'table':table}
@@ -603,39 +602,39 @@ class Aggregate (Service):
             ns='{http://opendatakit.org/submissions}'
             instance_ids=[child.text for child in root[0].findall(ns+'id')]
             no_sub= len(instance_ids)
-#            print('instance ids before filter',instance_ids)
-            #print('number of submissions are',no_sub)
+#            self.print('instance ids before filter',instance_ids)
+            #self.print('number of submissions are',no_sub)
             ns1='{http://www.opendatakit.org/cursor}'
             lastReturnedURI= ET.fromstring(root[1].text).findall(ns1+'uriLastReturnedValue')[0].text
-            print("last id  is",lastID)
-            print( "last returned id is",lastReturnedURI)
-            #print('server lastID is', lastReturnedURI)
+            self.print("last id  is",lastID)
+            self.print( "last returned id is",lastReturnedURI)
+            #self.print('server lastID is', lastReturnedURI)
             if lastID ==lastReturnedURI:
-                print ('No Download returning')
+                self.print ('No Download returning')
                 return {'response':response, 'table':table,'lastID':None}
             lastindex=0
             try:
                 lastindex= instance_ids.index(lastID)
             except:
-                print ('first Download')
+                self.print ('first Download')
             instance_ids=instance_ids[lastindex:]
-            print('downloading')
+            self.print('downloading')
             for id in instance_ids :
                 if id:
                     url=self.turl+'/view/downloadSubmission'
-                    #print (url)
+                    #self.print (url)
                     para={'formId':'{}[@version={} and @uiVersion=null]/{}[@key={}]'.format(self.xFormKey,self.version,self.topElement,id)}
-                    response=requests.request(method,url,params=para,proxies= self.proxyConfig,auth=self.auth,verify=False)
+                    response=requests.request(method,url,params=para,proxies= self.proxyConfig,auth=self.getAuth(),verify=False)
                     if not response.status_code == 200:
                         return response,table
-                    #print('xml downloaded is',response.content)
+                    #self.print('xml downloaded is',response.content)
                     root1=ET.fromstring(response.content)
-                    #print('downloaded data is',root1)
+                    #self.print('downloaded data is',root1)
                     data=root1[0].findall(ns+self.topElement)
-                    #print('data is',data[0])
+                    #self.print('data is',data[0])
                     dict={child.tag.split('}')[-1]:child.text for child in data[0]}
                     dict['ODKUUID']=id
-                    #print('dictionary is',dict)
+                    #self.print('dictionary is',dict)
                     dict2= dict.copy()
                     for key,value in dict2.items():
                                 if value is None:
@@ -643,33 +642,33 @@ class Aggregate (Service):
                                     try:
                                         for child in grEle[0]:
                                             dict[child.tag.split('}')[-1]]=child.text
-                                            #print('found a group element')
+                                            #self.print('found a group element')
                                     except:
-                                        #print('error')
+                                        #self.print('error')
                                         pass
                     mediaFiles=root1.findall(ns+'mediaFile')
                     if len(mediaFiles)>0:
                         for mediaFile in mediaFiles:
                             mediaDict={child.tag.replace(ns,''):child.text for child in mediaFile}
                             for key,value in six.iteritems(dict):
-                                #print('value is',value)
+                                #self.print('value is',value)
                                 if value==mediaDict['filename']:
                                     murl= mediaDict['downloadUrl']
-                                    #print('Download url is',murl)
+                                    #self.print('Download url is',murl)
                                     if murl.endswith('as_attachment=true'):
                                         murl=murl[:-19]
                                         dict[key]= murl
                     table.append(dict)
             #self.getValue('lastID',lastReturnedURI)
-            #print ('table is:',table)
+            #self.print ('table is:',table)
             self.lastID=lastReturnedURI
             return {'response':response, 'table':table,'lastID':lastReturnedURI}
         except Exception as e:
-            print ('not able to fetch',e)
+            self.print ('not able to fetch',e)
             return {'response':response, 'table':table,'lastID':None}
 
 
-class Kobo (Aggregate):
+class Kobo (Service):
     def __init__(self,parent,caller):
         super(Kobo, self).__init__(parent,caller)
         self.tag='Kobo'
@@ -685,9 +684,9 @@ class Kobo (Aggregate):
     def prepareSendForm(self,layer):
         self.updateFields(layer)
         fieldDict,choicesList= self.getFieldsModel(layer)
-        print ('fieldDict',fieldDict)
+        self.print ('fieldDict',fieldDict)
         payload={"uid":layer.name(),"name":layer.name(),"asset_type":"survey","content":json.dumps({"survey":fieldDict,"choices":choicesList})}
-        print("Payload= ",payload)
+        self.print("Payload= ",payload)
         self.sendForm(layer.name(),payload)
     def sendForm(self,xForm_id,payload):
 #        step1 - verify if form exists:
@@ -725,7 +724,7 @@ class Kobo (Aggregate):
         permissions={"user":self.getValue('url')+"api/v2/users/AnonymousUser/","permission":self.getValue('url')+"api/v2/permissions/view_submissions/"}
         #shares submissions publicly:
         response3 = requests.post(urlShare, json=permissions, auth=(user,password),headers=headers)
-        print(self.tag,response3.text)
+        self.print(self.tag,response3.text)
         if response.status_code== 201 or response.status_code == 200:
             self.iface.messageBar().pushSuccess(self.tag,
                                                 self.tr('Layer is online('+message+'), Collect data from App'))
@@ -745,17 +744,17 @@ class Kobo (Aggregate):
         else:
             self.iface.messageBar().pushWarning(self.tag,self.tr("Enter url in settings"))
             return None,None
-#        print (url)
+#        self.print (url)
         para={'format':'json'}
         keyDict={}
         questions=[]
         try:
-            response= requests.get(url,proxies=getProxiesConf(),auth=(user,password),params=para)
+            response= requests.get(url,proxies=self.getProxiesConf(),auth=(user,password),params=para)
             forms= response.json()
             for form in forms['results']:
                 if form['asset_type']=='survey' and form['deployment__active']==True:
                     keyDict[form['name']]=form['uid']
-#            print('keyDict is',keyDict)
+#            self.print('keyDict is',keyDict)
             return keyDict,response
         except:
             self.iface.messageBar().pushCritical(self.tag,self.tr("Invalid url username or password"))
@@ -772,7 +771,7 @@ class Kobo (Aggregate):
         para={'format':'xml'}
         requests.packages.urllib3.disable_warnings()
         try:
-            response= requests.request('GET',url,proxies=getProxiesConf(),auth=(user,password),verify=False,params=para)
+            response= requests.request('GET',url,proxies=self.getProxiesConf(),auth=(user,password),verify=False,params=para)
         except:
             self.iface.messageBar().pushCritical(self.tag,self.tr("Invalid url,username or password"))
             return
@@ -785,7 +784,7 @@ class Kobo (Aggregate):
             layer.setName(self.layer_name)
             self.user=user
             self.password=password
-            print("calling collect data",self.tag)
+            self.print("calling collect data",self.tag)
             self.collectData(layer,selectedForm,doImportData,self.layer_name,self.version,self.geoField)
         else:
             self.iface.messageBar().pushWarning(self.tag,self.tr("not able to connect to server"))
@@ -804,23 +803,23 @@ class Kobo (Aggregate):
             version=instance[0].attrib['version']
         except:
             version='null'
-#        print('form name is '+ layer_name)
-#        print (root[0][1].findall(ns+'bind'))
+#        self.print('form name is '+ layer_name)
+#        self.print (root[0][1].findall(ns+'bind'))
         for bind in root[0][1].findall(ns+'bind'):
             attrib=bind.attrib
-            print (attrib)
+            self.print (attrib)
             fieldName= attrib['nodeset'].split('/')[-1]
             try:
                 fieldType=attrib['type']
             except:
                 continue
             fields[fieldName]=fieldType
-#            print('attrib type is',attrib['type'])
-            qgstype,config = qtype(attrib['type'])
-#            print ('first attribute'+ fieldName)
+#            self.print('attrib type is',attrib['type'])
+            qgstype,config = self.qtype(attrib['type'])
+#            self.print ('first attribute'+ fieldName)
             inputs=root[1].findall('.//*[@ref]')
             if fieldType[:3]!='geo':
-                #print('creating new field:'+ fieldName)
+                #self.print('creating new field:'+ fieldName)
                 isHidden= True
                 if fieldName=='instanceID':
                     fieldName='ODKUUID'
@@ -831,18 +830,18 @@ class Kobo (Aggregate):
                         isHidden= False
                         break
                 if isHidden:
-                    print('Reached Hidden')
+                    self.print('Reached Hidden')
                     config['type']='Hidden'
             else:
                 geoField=fieldName
-                print('geometry field is =',fieldName)
+                self.print('geometry field is =',fieldName)
                 continue
             self.updateFields(layer,fieldName,qgstype,config)
         return layer_name,version,geoField,fields
 
     def getTable(self,task):
         try:
-            print("get table started",self.tag)
+            self.print("get table started",self.tag)
             #task.setProgress(10.0)
             #requests.packages.urllib3.disable_warnings()
             url=self.turl
@@ -851,7 +850,7 @@ class Kobo (Aggregate):
             if not self.isImportData:
                 lastSub=self.lastID
             urlData=url+'/api/v2/assets/'+self.xFormKey+'/data/'
-            print('urldata is '+urlData)
+            self.print('urldata is '+urlData)
             table=[]
             response=None
             if not lastSub:
@@ -859,25 +858,25 @@ class Kobo (Aggregate):
                 try:
                     response = requests.get(urlData,proxies=self.proxyConfig,auth=(self.user,self.password),params=para,verify=False)
                 except:
-                    print("not able to connect to server",urlData)
+                    self.print("not able to connect to server",urlData)
                     return {'response':response, 'table':table}
-                print('requesting url is'+response.url)
+                self.print('requesting url is'+response.url)
             else:
                 query_param={"_id": {"$gt":int(lastSub)}}
                 jsonquery=json.dumps(query_param)
-                print('query_param is'+jsonquery)
+                self.print('query_param is'+jsonquery)
                 para={'query':jsonquery,'format':'json'}
                 try:
                     response = requests.get(urlData,proxies=self.proxyConfig,auth=(self.user,self.password),params=para,verify=False)
-                    print('requesting url is'+response.url)
+                    self.print('requesting url is'+response.url)
                 except:
-                    print("not able to connect to server",urlData)
+                    self.print("not able to connect to server",urlData)
                     return {'response':response, 'table':table,'lastID':None}
             #task.setProgress(50)
             data=response.json()
-            #print(data,type(data))
+            #self.print(data,type(data))
             subList=[]
-            print("no of submissions are",data['count'])
+            self.print("no of submissions are",data['count'])
             if data['count']==0:
                 return {'response':response, 'table':table}
             for submission in data['results']:
@@ -889,9 +888,9 @@ class Kobo (Aggregate):
                 #subTime_datetime=datetime.datetime.strptime(subTime,'%Y-%m-%dT%H:%M:%S')
                 subList.append(subID)
                 for key in list(submission):
-                    print(key)
+                    self.print(key)
                     if key == self.geoField:
-                        print (self.geoField)
+                        self.print (self.geoField)
                         continue
                     if key not in self.fields:
                         submission.pop(key)
@@ -904,7 +903,7 @@ class Kobo (Aggregate):
                 lastSubmission=max(subList)
             return {'response':response, 'table':table,'lastID':lastSubmission}
         except Exception as e:
-            print("exception occured in gettable",e)
+            self.print("exception occured in gettable",e)
             return {'response':None, 'table':None,'lastID':None}
 
     def getFieldsModel(self,currentLayer):
@@ -938,11 +937,11 @@ class Kobo (Aggregate):
             fieldDef["name"]=field.name()
             fieldDef["label"] = field.alias() or field.name()
 #            fieldDef['hint'] = ''
-            fieldDef["type"] = QVariantToODKtype(field.type())
+            fieldDef["type"] = self.QVariantToODKtype(field.type())
 #            fieldDef['bind'] = {}
 #            fieldDef['fieldWidget'] = currentFormConfig.widgetType(i)
             fieldDef["fieldWidget"]=widget.type()
-            print("getFieldModel",fieldDef["fieldWidget"])
+            self.print("getFieldModel",fieldDef["fieldWidget"])
             if fieldDef["fieldWidget"] in ("ValueMap","CheckBox","Photo","ExternalResource"):
                 if fieldDef["fieldWidget"] == "ValueMap":
                     fieldDef["type"]="select_one"
@@ -954,13 +953,13 @@ class Kobo (Aggregate):
                     for value in valueMap:
                         for k,v in value.items():
                                 config[v]=k
-                    print('configuration is ',config)
+                    self.print('configuration is ',config)
                     for name,label in config.items():
                         choicesList.append({"name":name,"label":label,"list_name":listName})
 #                    fieldDef["choices"] = choicesList
                 elif fieldDef["fieldWidget"] == 'Photo' or fieldDef["fieldWidget"] == 'ExternalResource' :
                     fieldDef["type"]="image"
-                    print('got an image type field')
+                    self.print('got an image type field')
 
 #                fieldDef['choices'] = config
 #            else:
@@ -972,7 +971,7 @@ class Kobo (Aggregate):
             i+=1
         return fieldsModel,choicesList
 
-class Central (Kobo):
+class Central (Service):
 
     def __init__(self,parent,caller):
         super(Central, self).__init__(parent,caller)
@@ -1099,14 +1098,14 @@ class Central (Kobo):
         fieldDict= self.getFieldsModel(layer)
         surveyDict= {"name" : layer.name(),"title" : layer.name(),"VERSION" : version, "instance_name" : 'uuid()', "submission_url" : '',
         "default_language" : 'default', 'id_string' : layer.name(), 'type' : 'survey', 'children' : fieldDict}
-        print(str(surveyDict))
+        self.print(str(surveyDict))
         survey=create_survey_element_from_dict(surveyDict)
         try:
             xml=survey.to_xml(validate=None, warnings='warnings')
             os.chdir(os.path.expanduser('~'))
             self.sendForm(layer.name(),xml)
         except Exception as e:
-            print("error in creating xform xml",e)
+            self.print("error in creating xform xml",e)
             self.iface.messageBar().pushCritical(self.tag,self.tr("Survey form can't be created, check layer name"))
 
 
@@ -1142,7 +1141,7 @@ class Central (Kobo):
         authRequest = requests.post(authURL,data = json.dumps(authentication), headers = authHeaders)
         bearerToken = authRequest.json()["token"]
         headers = {'Content-Type': "application/xml", 'Authorization': "Bearer " + bearerToken}
-        response = requests.post(url,data=xml, proxies = getProxiesConf(),headers=headers,verify=False)
+        response = requests.post(url,data=xml, proxies = self.getProxiesConf(),headers=headers,verify=False)
         if response.status_code== 201 or response.status_code == 200:
             self.iface.messageBar().pushSuccess(self.tr("QRealTime plugin"),
                                                 self.tr('Layer is online('+message+'), Collect data from App'))
@@ -1180,11 +1179,11 @@ class Central (Kobo):
             fieldDef['map'] = field.name()
             fieldDef['label'] = field.alias() or field.name()
             fieldDef['hint'] = ''
-            fieldDef['type'] = QVariantToODKtype(field.type())
+            fieldDef['type'] = self.QVariantToODKtype(field.type())
             fieldDef['bind'] = {}
 #            fieldDef['fieldWidget'] = currentFormConfig.widgetType(i)
             fieldDef['fieldWidget']=widget.type()
-            print('getFieldModel',fieldDef['fieldWidget'])
+            self.print('getFieldModel',fieldDef['fieldWidget'])
             if fieldDef['fieldWidget'] in ('ValueMap','CheckBox','Photo','ExternalResource'):
                 if fieldDef['fieldWidget'] == 'ValueMap':
                     fieldDef['type']='select one'
@@ -1193,12 +1192,12 @@ class Central (Kobo):
                     for value in valueMap:
                         for k,v in value.items():
                                 config[v]=k
-                    print('configuration is ',config)
+                    self.print('configuration is ',config)
                     choicesList=[{'name':name,'label':label} for name,label in config.items()]
                     fieldDef["choices"] = choicesList
                 elif fieldDef['fieldWidget'] == 'Photo' or fieldDef['fieldWidget'] == 'ExternalResource' :
                     fieldDef['type']='image'
-                    print('got an image type field')
+                    self.print('got an image type field')
 
 #                fieldDef['choices'] = config
             else:
@@ -1208,6 +1207,56 @@ class Central (Kobo):
             fieldsModel.append(fieldDef)
             i+=1
         return fieldsModel
+
+    def updateLayerXML(self,layer,xml):
+        geoField=''
+        ns='{http://www.w3.org/2002/xforms}'
+        nsh='{http://www.w3.org/1999/xhtml}'
+        root= ET.fromstring(xml)
+        #key= root[0][1][0][0].attrib['id']
+        layer_name=root[0].find(nsh+'title').text
+        instance=root[0][1].find(ns+'instance')
+        fields={}
+        #topElement=root[0][1][0][0].tag.split('}')[1]
+        try:
+            version=instance[0].attrib['version']
+        except:
+            version='null'
+#        self.print('form name is '+ layer_name)
+#        self.print (root[0][1].findall(ns+'bind'))
+        for bind in root[0][1].findall(ns+'bind'):
+            attrib=bind.attrib
+            self.print (attrib)
+            fieldName= attrib['nodeset'].split('/')[-1]
+            try:
+                fieldType=attrib['type']
+            except:
+                continue
+            fields[fieldName]=fieldType
+#            self.print('attrib type is',attrib['type'])
+            qgstype,config = self.qtype(attrib['type'])
+#            self.print ('first attribute'+ fieldName)
+            inputs=root[1].findall('.//*[@ref]')
+            if fieldType[:3]!='geo':
+                #self.print('creating new field:'+ fieldName)
+                isHidden= True
+                if fieldName=='instanceID':
+                    fieldName='ODKUUID'
+                    fields[fieldName]=fieldType
+                    isHidden= False
+                for input in inputs:
+                    if fieldName == input.attrib['ref'].split('/')[-1]:
+                        isHidden= False
+                        break
+                if isHidden:
+                    self.print('Reached Hidden')
+                    config['type']='Hidden'
+            else:
+                geoField=fieldName
+                self.print('geometry field is =',fieldName)
+                continue
+            self.updateFields(layer,fieldName,qgstype,config)
+        return layer_name,version,geoField,fields
 
     def getTable(self,task):
         """Retrieves data from form table, and filters out only the necessary fields
@@ -1226,23 +1275,23 @@ class Central (Kobo):
         requests.packages.urllib3.disable_warnings()
         # hard coded url is being used
         url=self.getValue('url')
-        print(url)
+        self.print(url)
         storedGeoField = self.geoField
         lastSub=""
         if not self.isImportData:
             try:
                 lastSub=self.getValue(self.tr('last Submission'))
             except:
-                print("error")
+                self.print("error")
         url_submissions=url + "v1/projects/"+str(Central.project_id)+"/forms/" + Central.form_name
         url_data=url + "v1/projects/"+str(Central.project_id)+"/forms/" + Central.form_name + ".svc/Submissions"
-        #print('urldata is '+url_data)
+        #self.print('urldata is '+url_data)
         response = requests.get(url_submissions, headers={"Authorization": "Bearer " + Central.usertoken, "X-Extended-Metadata": "true"})
         response1 = requests.get(url_data, headers={"Authorization": "Bearer " + Central.usertoken})
         submissionHistory=response.json()
         # json produces nested dictionary contain all table data
         data=response1.json()
-        print(data)
+        self.print(data)
         subTimeList=[]
         table=[]
         if submissionHistory['submissions']==0:
@@ -1280,24 +1329,24 @@ class Central (Kobo):
             formattedData[storedGeoField] = stringversion
             if formattedData['attachmentsPresent']>0:
                 url_data1 = url + "v1/projects/"+str(Central.project_id)+"/forms/" + Central.form_name +"/submissions"+"/"+formattedData['ODKUUID']+ "/attachments"
-                print("making attachment request"+url_data1)
+                self.print("making attachment request"+url_data1)
                 attachmentsResponse = requests.get(url_data1, headers={"Authorization": "Bearer " + Central.usertoken})
-                print("url response is"+ str(attachmentsResponse.status_code))
+                self.print("url response is"+ str(attachmentsResponse.status_code))
                 for attachment in attachmentsResponse.json():
                     binar_url= url_data1 +"/"+str(attachment['name'])
             #subTime_datetime=datetime.datetime.strptime(subTime,'%Y-%m-%dT%H:%M:%S')
             #subTimeList.append(subTime_datetime)
             for key in list(formattedData):
-                print(key)
+                self.print(key)
                 if key == self.geoField:
-                    print (self.geoField)
+                    self.print (self.geoField)
                     continue
                 if key not in self.fields:
                     formattedData.pop(key)
                 else:
                     if self.fields[key]=="binary":
                         formattedData[key]=binar_url
-            print("submission parsed"+str(formattedData))
+            self.print("submission parsed"+str(formattedData))
             table.append(formattedData)
         if len(subTimeList)>0:
             lastSubmission=max(subTimeList)
