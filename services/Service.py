@@ -49,6 +49,9 @@ class Service (QTableWidget):
             else:
                 self.setItem(row,1,QTableWidgetItem (valueFromSettings))
 
+    def getServiceName(self):
+        return "Unamed"
+        
   # Helper methods
     def print(self, text, opt=None):
         """ to redirect print to MessageLog"""
