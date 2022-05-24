@@ -1,8 +1,5 @@
 from .Service import Service
-import os
 import requests
-import datetime
-import site
 import xml.etree.ElementTree as ET
 import json
 from pyxform.builder import create_survey_element_from_dict

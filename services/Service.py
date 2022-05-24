@@ -1,20 +1,11 @@
 from email.policy import default
-import os
-from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication,QVariant
-from PyQt5 import QtGui, uic
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import QWidget,QTableWidget,QTableWidgetItem
-from PyQt5.QtCore import Qt, QSettings, QSize,QVariant, QTranslator, qVersion, QCoreApplication
-import xml.etree.ElementTree as ET
-import requests
-from qgis.gui import QgsMessageBar
+from PyQt5.QtCore import QSettings, QCoreApplication,QVariant
+from PyQt5.QtWidgets import QTableWidget,QTableWidgetItem
+from PyQt5.QtCore import Qt, QSettings, QSize,QVariant, QCoreApplication
 from qgis.core import QgsProject,QgsFeature,QgsGeometry,QgsField, QgsCoordinateReferenceSystem, QgsPoint, QgsCoordinateTransform,edit,QgsPointXY,QgsEditorWidgetSetup,QgsTaskManager,QgsTask,QgsApplication
-import six
 from six.moves import range
 from qgis.core import QgsMessageLog, Qgis
-import datetime
-import site
-import json
+
 
 debug=True
 tag="QRealTime"
@@ -223,15 +214,6 @@ class Service (QTableWidget):
         self.version=version
         self.print("task is being created")
         self.backgroundTask('downloading data',self.getTable, on_finished=self.comp)
-        # self.task1 = QgsTask.fromFunction('downloading data',self.getTable, on_finished=self.comp)
-        # self.print("task is created")
-        # self.print("task status1 is  ",self.task1.status())
-        # QgsApplication.taskManager().addTask(self.task1)
-        # self.print("task added to taskmanager")
-        # self.print("task status2 is  ",self.task1.status())
-        # #task1.waitForFinished()
-        # self.print("task status3 is  ",self.task1.status())
-        # #response, remoteTable = self.getTable(xFormKey,importData,topElement,version)
 
     # helper - add ODKUUID or otherwise specified field to the layer
     def updateFields(self,layer,text='ODKUUID',q_type=QVariant.String,config={}):

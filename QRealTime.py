@@ -24,19 +24,13 @@
 """
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication,QVariant
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMenu,QAction, QFileDialog
+from PyQt5.QtWidgets import QAction
 # Import the code for the dialog
 from .QRealTime_dialog import QRealTimeDialog
 from .QRealTime_dialog_import import ImportData
 import os.path
 from qgis.core import QgsMapLayer
-import warnings
-import unicodedata
-import re
-import json
 from qgis.PyQt.QtCore import QTimer
-import requests
-import xml.etree.ElementTree as ET
 from qgis.core import QgsMessageLog, Qgis
 tag='QRealTime'
 def print(text,opt=''):

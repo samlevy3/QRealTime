@@ -3,10 +3,8 @@ from .Service import Service
 import os
 import requests
 import datetime
-import site
 import json
 import xml.etree.ElementTree as ET
-from pyxform.builder import create_survey_element_from_dict
 
 class Central (Service):
 
@@ -130,24 +128,6 @@ class Central (Service):
             else:
                 new_dict[key] = val
         return new_dict
-
-#     def prepareSendForm(self,layer):
-# #        get the fields model like name , widget type, options etc.
-#         self.updateFields(layer)
-#         version= str(datetime.date.today())
-#         fieldDict= self.getFieldsModel(layer)
-#         surveyDict= {"name" : layer.name(),"title" : layer.name(),"VERSION" : version, "instance_name" : 'uuid()', "submission_url" : '',
-#         "default_language" : 'default', 'id_string' : layer.name(), 'type' : 'survey', 'children' : fieldDict}
-#         self.print(str(surveyDict))
-#         survey= create_survey_element_from_dict(surveyDict)
-#         try:
-#             xml=survey.to_xml(validate=None, warnings='warnings')
-#             os.chdir(os.path.expanduser('~'))
-#             self.sendForm(layer.name(),xml)
-#         except Exception as e:
-#             self.print("error in creating xform xml",e)
-#             self.iface.messageBar().pushCritical(self.tag,self.tr("Survey form can't be created, check layer name"))
-
 
     def sendForm(self,layer):
         xml = layer2XForm(self, layer)
