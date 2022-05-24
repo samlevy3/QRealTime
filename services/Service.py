@@ -344,6 +344,9 @@ class Service (QTableWidget):
     def importData(self):
         raise NotImplementedError
 
+    def getTable(self):
+        raise NotImplementedError
+
     def getFormList(self):
         raise NotImplementedError
 
