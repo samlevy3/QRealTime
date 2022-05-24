@@ -1,3 +1,4 @@
+from helper.layer2form import layer2XForm
 from .Service import Service
 import os
 import requests
@@ -265,22 +266,25 @@ class Aggregate (Service):
             else:
                 geoField=fieldName
         return key,topElement,version,geoField
-    def prepareSendForm(self,layer):
-        self.updateFields(layer)
-        version= str(datetime.date.today())
-        fieldDict= self.getFieldsModel(layer)
-        self.print ('fieldDict',fieldDict)
-        surveyDict= {"name":layer.name(),"title":layer.name(),'VERSION':version,"instance_name": 'uuid()',"submission_url": '',
-        "default_language":'default','id_string':layer.name(),'type':'survey','children':fieldDict }
-        survey=create_survey_element_from_dict(surveyDict)
-        try:
-            xml=survey.to_xml(validate=None, warnings='warnings')
-            os.chdir(os.path.expanduser('~'))
-            self.sendForm(layer.name(),xml)
-        except Exception as e:
-            self.print("error in creating xform xml",e)
-            self.iface.messageBar().pushCritical(self.tag,self.tr("Survey form can't be created, check layer name"))
-    def sendForm(self,xForm_id,xml):
+    # def prepareSendForm(self,layer):
+    #     self.updateFields(layer)
+    #     version= str(datetime.date.today())
+    #     fieldDict= self.getFieldsModel(layer)
+    #     self.print ('fieldDict',fieldDict)
+    #     surveyDict= {"name":layer.name(),"title":layer.name(),'VERSION':version,"instance_name": 'uuid()',"submission_url": '',
+    #     "default_language":'default','id_string':layer.name(),'type':'survey','children':fieldDict }
+    #     survey=create_survey_element_from_dict(surveyDict)
+    #     try:
+    #         xml=survey.to_xml(validate=None, warnings='warnings')
+    #         os.chdir(os.path.expanduser('~'))
+    #         self.sendForm(layer.name(),xml)
+    #     except Exception as e:
+    #         self.print("error in creating xform xml",e)
+    #         self.iface.messageBar().pushCritical(self.tag,self.tr("Survey form can't be created, check layer name"))
+    def sendForm(self,layer):
+        xml = layer2XForm(self, layer)
+        xForm_id = layer.name()
+        os.chdir(os.path.expanduser('~'))
 #        step1 - verify if form exists:
         formList, response = self.getFormList()
         if not response:

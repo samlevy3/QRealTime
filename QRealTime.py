@@ -53,13 +53,13 @@ def getProxiesConf():
     if proxyEnabled == "true" and proxyType == 'HttpProxy': # test if there are proxy settings
         proxyDict = {
             "http"  : "http://%s:%s@%s:%s" % (proxyUser,proxyPassword,proxyHost,proxyPort),
-            "https" : "http://%s:%s@%s:%s" % (proxyUser,proxyPassword,proxyHost,proxyPort) 
+            "https" : "http://%s:%s@%s:%s" % (proxyUser,proxyPassword,proxyHost,proxyPort)
         }
         return proxyDict
     else:
         return None
 
-    
+
 class QRealTime:
     """QGIS Plugin Implementation."""
 
@@ -193,7 +193,7 @@ class QRealTime:
                 action)
         self.actions.append(action)
         return action
-    
+
     def add_layer_action( self,icon_path,text,callback,icon_enabled=True,add_to_vLayer=True,enabled_flag=True,parent=None):
         icon = QIcon(icon_path)
         if icon_enabled:
@@ -208,7 +208,7 @@ class QRealTime:
         self.actions.append(action)
 
         return action
-    
+
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
@@ -262,7 +262,7 @@ class QRealTime:
             # substitute with your code.
             self.service=self.dlg.getCurrentService()
             self.service.setup()
-            
+
     def importData(self):
         self.service=self.dlg.getCurrentService()
         layer=self.getLayer()
@@ -276,16 +276,16 @@ class QRealTime:
 	            result=self.ImportData.exec_()
 	            if result:
 	                selectedForm= self.ImportData.comboBox.currentData()
-	                self.service.importData(layer,selectedForm,True)            
+	                self.service.importData(layer,selectedForm,True)
     def getLayer(self):
         return self.iface.activeLayer()
-        
+
     def sendForm(self):
 #        get the fields model like name , widget type, options etc.
         layer=self.getLayer()
         service=self.dlg.getCurrentService()
-        service.prepareSendForm(layer)
-        
+        service.sendForm(layer)
+
     def download(self,checked=False):
         if checked==True:
             self.layer= self.getLayer()
@@ -302,5 +302,5 @@ class QRealTime:
         elif checked==False:
             self.timer.stop()
             print("timer stoped")
-            
-    
+
+

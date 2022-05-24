@@ -11,7 +11,7 @@ class Kobo (Service):
     def __init__(self,parent,caller):
         super(Kobo, self).__init__(parent,caller)
         self.tag='Kobo'
-        
+
     def getServiceName(self):
         return "Kobo"
 
@@ -24,14 +24,18 @@ class Kobo (Service):
         [self.tr("last Submission"),''],
         [self.tr('sync time'),'']
         ]
+
     def prepareSendForm(self,layer):
         self.updateFields(layer)
         fieldDict,choicesList= self.getFieldsModel(layer)
         self.print ('fieldDict',fieldDict)
         payload={"uid":layer.name(),"name":layer.name(),"asset_type":"survey","content":json.dumps({"survey":fieldDict,"choices":choicesList})}
         self.print("Payload= ",payload)
-        self.sendForm(layer.name(),payload)
-    def sendForm(self,xForm_id,payload):
+        return payload
+
+    def sendForm(self,layer):
+        xForm_id = layer.name()
+        payload = self.prepareSendForm(layer)
 #        step1 - verify if form exists:
         formList, response = self.getFormList()
         form=''
