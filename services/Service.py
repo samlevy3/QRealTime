@@ -1,3 +1,4 @@
+from email.policy import default
 import os
 from PyQt5.QtCore import QSettings, QTranslator, qVersion, QCoreApplication,QVariant
 from PyQt5 import QtGui, uic
@@ -51,7 +52,7 @@ class Service (QTableWidget):
 
     def getServiceName(self):
         return "Unamed"
-        
+
   # Helper methods
     def print(self, text, opt=None):
         """ to redirect print to MessageLog"""
@@ -221,15 +222,16 @@ class Service (QTableWidget):
         self.topElement=topElement
         self.version=version
         self.print("task is being created")
-        self.task1 = QgsTask.fromFunction('downloading data',self.getTable, on_finished=self.comp)
-        self.print("task is created")
-        self.print("task status1 is  ",self.task1.status())
-        QgsApplication.taskManager().addTask(self.task1)
-        self.print("task added to taskmanager")
-        self.print("task status2 is  ",self.task1.status())
-        #task1.waitForFinished()
-        self.print("task status3 is  ",self.task1.status())
-        #response, remoteTable = self.getTable(xFormKey,importData,topElement,version)
+        self.backgroundTask('downloading data',self.getTable, on_finished=self.comp)
+        # self.task1 = QgsTask.fromFunction('downloading data',self.getTable, on_finished=self.comp)
+        # self.print("task is created")
+        # self.print("task status1 is  ",self.task1.status())
+        # QgsApplication.taskManager().addTask(self.task1)
+        # self.print("task added to taskmanager")
+        # self.print("task status2 is  ",self.task1.status())
+        # #task1.waitForFinished()
+        # self.print("task status3 is  ",self.task1.status())
+        # #response, remoteTable = self.getTable(xFormKey,importData,topElement,version)
 
     # helper - add ODKUUID or otherwise specified field to the layer
     def updateFields(self,layer,text='ODKUUID',q_type=QVariant.String,config={}):
@@ -333,6 +335,25 @@ class Service (QTableWidget):
         S.setValue("QRealTime/", self.parent.parent().currentIndex())
         for row in range (0,self.rowCount()):
             S.setValue("QRealTime/%s/%s/" % (self.service_id,self.item(row,0).text()),self.item(row,1).text())
+
+    def backgroundTask(self, taskName, func, callback=None):
+        if callback is None:
+            callback = self.defaultCallback
+        self.task = QgsTask.fromFunction(taskName, func, on_finished=callback)
+        QgsApplication.taskManager().addTask(self.task)
+
+    # if "task" value given in result (representing the task.description()), will specify task in message
+    def defaultCallback(self, exception, result):
+        if exception is None:
+            taskName = ""
+            if 'task' in result:
+                taskName = ": " + result['task']
+            if result is None:
+                self.iface.messageBar().pushCritical(self.tag,self.tr("Unsuccessful Task" + taskName))
+            else:
+                self.iface.messageBar().pushSuccess(self.tag,self.tr("Successful Task" + taskName))
+        else:
+            self.print("exception in task execution")
 
     # Implement in subclass
     def makeOnline(self):
