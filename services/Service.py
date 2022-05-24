@@ -338,7 +338,7 @@ class Service (QTableWidget):
             self.print("exception in task execution")
 
     # Implement in subclass
-    def makeOnline(self):
+    def sendForm(self):
         raise NotImplementedError
 
     def importData(self):
